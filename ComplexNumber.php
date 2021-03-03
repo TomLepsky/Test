@@ -5,6 +5,9 @@ class ComplexNumber {
 	public float $real;
 	public float $image;
 
+	public float $radius;
+	public float $angle;
+
 	public function __construct(float $real, float $image) {
 		$this->real = $real;
 		$this->image = $image;
@@ -53,11 +56,22 @@ class ComplexNumber {
 		return new self($this->real, -$this->image);
 	}
 
-	public function convertToStr() : string {
-		$str = $this->real == 0 ? "" : $this->real;
-		if ($this->image != 0) {
-			$sign = $this->image >= 0 ? "+" : "-";
-			$str .= " {$sign} " . abs($this->image) . "i";
+	private function convertToTrigonometric() : void {
+		$this->radius = sqrt(pow($this->real, 2) + pow($this->image, 2));
+		$this->angle = acos($this->real / $this->radius) * 180 / M_PI;
+	}
+
+	public function convertToStr(bool $trigonometric = false) : string {
+		$str = "";
+		if ($trigonometric) {
+			$this->convertToTrigonometric();
+			$str .= $this->radius . " * (cos" . $this->angle . " + i * sin" . $this->angle . ")";
+		} else {
+			$str = $this->real == 0 ? "" : $this->real;
+			if ($this->image != 0) {
+				$sign = $this->image >= 0 ? "+" : "-";
+				$str .= " {$sign} " . abs($this->image) . "i";
+			}
 		}
 		return $str;
 	}
